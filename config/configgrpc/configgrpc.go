@@ -36,6 +36,7 @@ import (
 	"go.opentelemetry.io/collector/config/confignet"
 	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/config/configoptional"
+	"go.opentelemetry.io/collector/config/configspa"
 	"go.opentelemetry.io/collector/config/configtls"
 	"go.opentelemetry.io/collector/confmap/xconfmap"
 	"go.opentelemetry.io/collector/extension/extensionauth"
@@ -126,6 +127,10 @@ type ClientConfig struct {
 
 	// Middlewares for the gRPC client.
 	Middlewares []configmiddleware.Config `mapstructure:"middlewares,omitempty"`
+
+	// SPA enables Single Packet Authorization cloaking on the gRPC TLS dial.
+	// When nil, the client behaves identically to upstream.
+	SPA *configspa.Config `mapstructure:"spa,omitempty"`
 
 	// prevent unkeyed literal initialization
 	_ struct{}
@@ -269,6 +274,12 @@ func (cc *ClientConfig) Validate() error {
 		}
 	}
 
+	if cc.SPA != nil {
+		if err := cc.SPA.Validate(); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -399,7 +410,18 @@ func (cc *ClientConfig) getGrpcDialOptions(
 		return nil, err
 	}
 	cred := insecure.NewCredentials()
-	if tlsCfg != nil {
+	if cc.SPA != nil {
+		if tlsCfg == nil {
+			return nil, errors.New("spa: cloaking requires TLS; configure tls block (insecure: false)")
+		}
+		// Capture tlsCfg in a loader so each dial gets a fresh clone via the
+		// configspa machinery; reuse the loaded config rather than re-running
+		// LoadTLSConfig per dial.
+		cred = newSPACredentials(cc.sanitizedEndpoint(), cc.SPA, func(context.Context) (*tls.Config, error) {
+			return tlsCfg, nil
+		})
+	}
+	if tlsCfg != nil && cc.SPA == nil {
 		cred = credentials.NewTLS(tlsCfg)
 	} else if cc.isSchemeHTTPS() {
 		cred = credentials.NewTLS(&tls.Config{})
