@@ -24,6 +24,7 @@ import (
 	"go.opentelemetry.io/collector/config/configmiddleware"
 	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/config/configoptional"
+	"go.opentelemetry.io/collector/config/configspa"
 	"go.opentelemetry.io/collector/config/configtls"
 )
 
@@ -113,6 +114,10 @@ type ClientConfig struct {
 	// Middleware handlers are called in the order they appear in this list,
 	// with the first middleware becoming the outermost handler.
 	Middlewares []configmiddleware.Config `mapstructure:"middlewares,omitempty"`
+
+	// SPA enables Single Packet Authorization cloaking on the TLS dial.
+	// When nil, the client behaves identically to upstream.
+	SPA *configspa.Config `mapstructure:"spa,omitempty"`
 }
 
 // CookiesConfig defines the configuration of the HTTP client regarding cookies served by the server.
@@ -141,6 +146,11 @@ func (cc *ClientConfig) Validate() error {
 			return err
 		}
 	}
+	if cc.SPA != nil {
+		if err := cc.SPA.Validate(); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -164,6 +174,12 @@ func (cc *ClientConfig) ToClient(ctx context.Context, extensions map[component.I
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	if tlsCfg != nil {
 		transport.TLSClientConfig = tlsCfg
+	}
+	if cc.SPA != nil {
+		if tlsCfg == nil {
+			return nil, errors.New("spa: cloaking requires TLS; configure tls block (insecure: false)")
+		}
+		transport.DialTLSContext = configspa.NewDialTLSContext(configspa.SanitizedEndpoint(cc.Endpoint), cc.SPA, tlsCfg)
 	}
 	if cc.ReadBufferSize > 0 {
 		transport.ReadBufferSize = cc.ReadBufferSize
