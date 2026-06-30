@@ -12,6 +12,7 @@ import (
 	"go.opentelemetry.io/collector/config/confignet"
 	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/config/configoptional"
+	"go.opentelemetry.io/collector/config/configspa"
 	"go.opentelemetry.io/collector/config/configtls"
 )
 
@@ -49,6 +50,10 @@ type ClientConfig struct {
 	// ReadBufferSize readBufferSize for gRPC client. See grpc.WithReadBufferSize.
 	// (https://godoc.org/google.golang.org/grpc#WithReadBufferSize).
 	ReadBufferSize int `mapstructure:"read_buffer_size,omitempty"`
+
+	// SPA enables Single Packet Authorization cloaking on the gRPC TLS dial.
+	// When nil, the client behaves identically to upstream.
+	SPA *configspa.Config `mapstructure:"spa,omitempty"`
 
 	// TLS tLS struct exposes TLS client configuration.
 	TLS configtls.ClientConfig `mapstructure:"tls,omitempty"`

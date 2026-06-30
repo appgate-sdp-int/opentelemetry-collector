@@ -34,6 +34,9 @@ $defs:
       read_buffer_size:
         description: ReadBufferSize for gRPC client. See grpc.WithReadBufferSize. (https://godoc.org/google.golang.org/grpc#WithReadBufferSize).
         type: integer
+      spa:
+        description: SPA enables Single Packet Authorization cloaking on the gRPC TLS dial. When nil, the client behaves identically to upstream.
+        $ref: /config/configspa.config
       tls:
         description: TLS struct exposes TLS client configuration.
         $ref: /config/configtls.client_config
