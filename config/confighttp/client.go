@@ -25,6 +25,7 @@ import (
 	"go.opentelemetry.io/collector/config/configmiddleware"
 	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/config/configoptional"
+	"go.opentelemetry.io/collector/config/configspa"
 	"go.opentelemetry.io/collector/config/configtls"
 	"go.opentelemetry.io/collector/confmap"
 )
@@ -115,6 +116,10 @@ type ClientConfig struct {
 	// deprecationWarnings records use of deprecated fields observed while
 	// unmarshaling; ToClient logs them, as no logger is available here.
 	deprecationWarnings []string
+
+	// SPA enables Single Packet Authorization cloaking on the TLS dial.
+	// When nil, the client behaves identically to upstream.
+	SPA *configspa.Config `mapstructure:"spa,omitempty"`
 
 	// prevent unkeyed literal initialization
 	_ struct{}
@@ -371,6 +376,11 @@ func (cc *ClientConfig) Validate() error {
 			return err
 		}
 	}
+	if cc.SPA != nil {
+		if err := cc.SPA.Validate(); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -398,6 +408,12 @@ func (cc *ClientConfig) ToClient(ctx context.Context, extensions map[component.I
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	if tlsCfg != nil {
 		transport.TLSClientConfig = tlsCfg
+	}
+	if cc.SPA != nil {
+		if tlsCfg == nil {
+			return nil, errors.New("spa: cloaking requires TLS; configure tls block (insecure: false)")
+		}
+		transport.DialTLSContext = configspa.NewDialTLSContext(configspa.SanitizedEndpoint(cc.Endpoint), cc.SPA, tlsCfg)
 	}
 	if cc.ReadBufferSize > 0 {
 		transport.ReadBufferSize = cc.ReadBufferSize

@@ -17,6 +17,7 @@ require (
 	go.opentelemetry.io/collector/config/confignet v1.68.0
 	go.opentelemetry.io/collector/config/configopaque v1.68.0
 	go.opentelemetry.io/collector/config/configoptional v1.68.0
+	go.opentelemetry.io/collector/config/configspa v0.0.0-00010101000000-000000000000
 	go.opentelemetry.io/collector/config/configtls v1.68.0
 	go.opentelemetry.io/collector/extension v1.68.0
 	go.opentelemetry.io/collector/extension/extensionauth v1.68.0
@@ -35,10 +36,15 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/google/gopacket v1.1.19 // indirect
+	github.com/jellydator/ttlcache/v3 v3.4.0 // indirect
+	github.com/sirupsen/logrus v1.9.4 // indirect
 	go.opentelemetry.io/collector/internal/componentalias v0.162.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
 )
 
 require (
+	github.com/appgate-sdp-int/gopackages/v2 v2.2.9 // indirect
 	github.com/felixge/httpsnoop v1.1.0 // indirect
 	github.com/foxboron/go-tpm-keyfiles v0.0.0-20251226215517-609e4778396f // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
@@ -84,6 +90,8 @@ replace go.opentelemetry.io/collector/config/confignet => ../confignet
 replace go.opentelemetry.io/collector/config/configopaque => ../configopaque
 
 replace go.opentelemetry.io/collector/config/configoptional => ../configoptional
+
+replace go.opentelemetry.io/collector/config/configspa => ../configspa
 
 replace go.opentelemetry.io/collector/config/configtls => ../configtls
 
