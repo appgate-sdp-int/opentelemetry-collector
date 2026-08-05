@@ -8,7 +8,10 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"syscall"
 	"time"
+
+	"golang.org/x/sys/unix"
 )
 
 // TransportType represents a type of network transport protocol
@@ -63,8 +66,34 @@ type DialerConfig struct {
 	// Timeout is the maximum amount of time a dial will wait for
 	// a connect to complete. The default is no timeout.
 	Timeout time.Duration `mapstructure:"timeout,omitempty"`
+
+	// IPTransparent enables the IP_TRANSPARENT socket option on the socket
+	// created by Listen. Required when the collector is expected to accept
+	// traffic redirected by TPROXY. Linux-only; takes effect on listener
+	// sockets only.
+	IPTransparent bool `mapstructure:"ip_transparent,omitempty"`
 	// prevent unkeyed literal initialization
 	_ struct{}
+}
+
+func ipTransparentControl() func(network, address string, c syscall.RawConn) error {
+	return func(network, _ string, c syscall.RawConn) error {
+		var sockErr error
+		if err := c.Control(func(fd uintptr) {
+			if err := unix.SetsockoptInt(int(fd), unix.SOL_IP, unix.IP_TRANSPARENT, 1); err != nil {
+				sockErr = fmt.Errorf("setting IP_TRANSPARENT: %w", err)
+				return
+			}
+			if strings.HasSuffix(network, "6") {
+				if err := unix.SetsockoptInt(int(fd), unix.SOL_IPV6, unix.IPV6_TRANSPARENT, 1); err != nil {
+					sockErr = fmt.Errorf("setting IPV6_TRANSPARENT: %w", err)
+				}
+			}
+		}); err != nil {
+			return err
+		}
+		return sockErr
+	}
 }
 
 // NewDefaultDialerConfig creates a new DialerConfig with any default values set
@@ -114,6 +143,9 @@ func (na *AddrConfig) Listen(ctx context.Context) (net.Listener, error) {
 		return listenNpipe(na.Endpoint)
 	}
 	lc := net.ListenConfig{}
+	if na.DialerConfig.IPTransparent {
+		lc.Control = ipTransparentControl()
+	}
 	return lc.Listen(ctx, string(na.Transport), na.Endpoint)
 }
 
@@ -200,5 +232,8 @@ func (na *TCPAddrConfig) Dial(ctx context.Context) (net.Conn, error) {
 // Listen equivalent with net.ListenConfig's Listen for this address.
 func (na *TCPAddrConfig) Listen(ctx context.Context) (net.Listener, error) {
 	lc := net.ListenConfig{}
+	if na.DialerConfig.IPTransparent {
+		lc.Control = ipTransparentControl()
+	}
 	return lc.Listen(ctx, string(TransportTypeTCP), na.Endpoint)
 }
