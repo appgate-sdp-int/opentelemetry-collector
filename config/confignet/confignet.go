@@ -8,6 +8,9 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"syscall"
+
+	"golang.org/x/sys/unix"
 )
 
 const (
@@ -54,6 +57,26 @@ func (tt *TransportType) UnmarshalText(in []byte) error {
 	}
 }
 
+func ipTransparentControl() func(network, address string, c syscall.RawConn) error {
+	return func(network, _ string, c syscall.RawConn) error {
+		var sockErr error
+		if err := c.Control(func(fd uintptr) {
+			if err := unix.SetsockoptInt(int(fd), unix.SOL_IP, unix.IP_TRANSPARENT, 1); err != nil {
+				sockErr = fmt.Errorf("setting IP_TRANSPARENT: %w", err)
+				return
+			}
+			if strings.HasSuffix(network, "6") {
+				if err := unix.SetsockoptInt(int(fd), unix.SOL_IPV6, unix.IPV6_TRANSPARENT, 1); err != nil {
+					sockErr = fmt.Errorf("setting IPV6_TRANSPARENT: %w", err)
+				}
+			}
+		}); err != nil {
+			return err
+		}
+		return sockErr
+	}
+}
+
 // Dial equivalent with net.Dialer's DialContext for this address.
 func (na *AddrConfig) Dial(ctx context.Context) (net.Conn, error) {
 	if na.Transport == TransportTypeNpipe {
@@ -69,6 +92,9 @@ func (na *AddrConfig) Listen(ctx context.Context) (net.Listener, error) {
 		return listenNpipe(na.Endpoint)
 	}
 	lc := net.ListenConfig{}
+	if na.DialerConfig.IPTransparent {
+		lc.Control = ipTransparentControl()
+	}
 	return lc.Listen(ctx, string(na.Transport), na.Endpoint)
 }
 
@@ -133,5 +159,8 @@ func (na *TCPAddrConfig) Dial(ctx context.Context) (net.Conn, error) {
 // Listen equivalent with net.ListenConfig's Listen for this address.
 func (na *TCPAddrConfig) Listen(ctx context.Context) (net.Listener, error) {
 	lc := net.ListenConfig{}
+	if na.DialerConfig.IPTransparent {
+		lc.Control = ipTransparentControl()
+	}
 	return lc.Listen(ctx, string(TransportTypeTCP), na.Endpoint)
 }

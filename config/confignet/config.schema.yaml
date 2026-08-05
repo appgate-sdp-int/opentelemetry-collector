@@ -21,6 +21,9 @@ $defs:
         type: string
         x-customType: time.Duration
         format: duration
+      ip_transparent:
+        description: IPTransparent enables the IP_TRANSPARENT socket option on the socket created by Listen. Required when the collector is expected to accept traffic redirected by TPROXY. Linux-only; takes effect on listener sockets only.
+        type: boolean
   tcp_addr_config:
     description: TCPAddrConfig represents a TCP endpoint address.
     type: object

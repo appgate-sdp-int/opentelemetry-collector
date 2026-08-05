@@ -40,6 +40,12 @@ type DialerConfig struct {
 	// Timeout the maximum amount of time a dial will wait for a connect to complete. The default is no timeout.
 	Timeout time.Duration `mapstructure:"timeout,omitempty"`
 
+	// IPTransparent enables the IP_TRANSPARENT socket option on the socket
+	// created by Listen. Required when the collector is expected to accept
+	// traffic redirected by TPROXY. Linux-only; takes effect on listener
+	// sockets only.
+	IPTransparent bool `mapstructure:"ip_transparent,omitempty"`
+
 	// prevent unkeyed literal initialization
 	_ struct{}
 }
