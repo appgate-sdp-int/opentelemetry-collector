@@ -3,7 +3,7 @@ module go.opentelemetry.io/collector/internal/schemagen
 go 1.25.0
 
 require (
-	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
 	github.com/stretchr/testify v1.11.1
 	go.opentelemetry.io/collector/confmap v1.61.0
 	go.yaml.in/yaml/v3 v3.0.4
