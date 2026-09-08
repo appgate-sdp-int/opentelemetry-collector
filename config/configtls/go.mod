@@ -6,9 +6,9 @@ require (
 	github.com/foxboron/go-tpm-keyfiles v0.0.0-20250903184740-5d135037bd4d
 	github.com/google/go-tpm v0.9.8
 	github.com/stretchr/testify v1.12.1
-	go.opentelemetry.io/collector/config/configopaque v1.65.0
-	go.opentelemetry.io/collector/confmap v1.65.0
-	go.opentelemetry.io/collector/internal/testutil v0.159.0
+	go.opentelemetry.io/collector/config/configopaque v1.66.0
+	go.opentelemetry.io/collector/confmap v1.66.0
+	go.opentelemetry.io/collector/internal/testutil v0.160.0
 	go.uber.org/goleak v1.3.0
 )
 
