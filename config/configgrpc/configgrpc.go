@@ -410,20 +410,26 @@ func (cc *ClientConfig) getGrpcDialOptions(
 		return nil, err
 	}
 	cred := insecure.NewCredentials()
-	if cc.SPA != nil {
+	switch {
+	case cc.SPA != nil:
 		if tlsCfg == nil {
 			return nil, errors.New("spa: cloaking requires TLS; configure tls block (insecure: false)")
 		}
+		endpoint := cc.sanitizedEndpoint()
 		// Capture tlsCfg in a loader so each dial gets a fresh clone via the
 		// configspa machinery; reuse the loaded config rather than re-running
 		// LoadTLSConfig per dial.
-		cred = newSPACredentials(cc.sanitizedEndpoint(), cc.SPA, func(context.Context) (*tls.Config, error) {
+		cred = newSPACredentials(endpoint, cc.SPA, func(context.Context) (*tls.Config, error) {
 			return tlsCfg, nil
 		})
-	}
-	if tlsCfg != nil && cc.SPA == nil {
+		// SPA-UDP must be sent BEFORE gRPC dials TCP so that hybrid (udp-tcp)
+		// mode can open the SPA cloak. Do the SPA-UDP + TCP dial in a custom
+		// dialer; the returned *spaConn carries the libspa handle over to
+		// ClientHandshake, which layers TLS with the SPA hello extension.
+		opts = append(opts, grpc.WithContextDialer(newSPADialer(endpoint, cc.SPA)))
+	case tlsCfg != nil:
 		cred = credentials.NewTLS(tlsCfg)
-	} else if cc.isSchemeHTTPS() {
+	case cc.isSchemeHTTPS():
 		cred = credentials.NewTLS(&tls.Config{})
 	}
 	opts = append(opts, grpc.WithTransportCredentials(cred))
