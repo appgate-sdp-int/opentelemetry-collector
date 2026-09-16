@@ -5,15 +5,15 @@ go 1.26.0
 require (
 	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.12.1
-	go.opentelemetry.io/collector/component v1.65.0
-	go.opentelemetry.io/collector/component/componenttest v0.159.0
-	go.opentelemetry.io/collector/connector v0.159.0
-	go.opentelemetry.io/collector/connector/xconnector v0.159.0
-	go.opentelemetry.io/collector/consumer v1.65.0
-	go.opentelemetry.io/collector/consumer/consumertest v0.159.0
-	go.opentelemetry.io/collector/consumer/xconsumer v0.159.0
-	go.opentelemetry.io/collector/pdata v1.65.0
-	go.opentelemetry.io/collector/pdata/pprofile v0.159.0
+	go.opentelemetry.io/collector/component v1.67.0
+	go.opentelemetry.io/collector/component/componenttest v0.161.0
+	go.opentelemetry.io/collector/connector v0.161.0
+	go.opentelemetry.io/collector/connector/xconnector v0.161.0
+	go.opentelemetry.io/collector/consumer v1.67.0
+	go.opentelemetry.io/collector/consumer/consumertest v0.161.0
+	go.opentelemetry.io/collector/consumer/xconsumer v0.161.0
+	go.opentelemetry.io/collector/pdata v1.67.0
+	go.opentelemetry.io/collector/pdata/pprofile v0.161.0
 	go.uber.org/goleak v1.3.0
 )
 

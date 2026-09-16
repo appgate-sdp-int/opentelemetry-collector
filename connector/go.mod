@@ -4,14 +4,14 @@ go 1.26.0
 
 require (
 	github.com/stretchr/testify v1.12.1
-	go.opentelemetry.io/collector/component v1.65.0
-	go.opentelemetry.io/collector/consumer v1.65.0
-	go.opentelemetry.io/collector/consumer/consumertest v0.159.0
-	go.opentelemetry.io/collector/internal/componentalias v0.159.0
-	go.opentelemetry.io/collector/internal/fanoutconsumer v0.159.0
-	go.opentelemetry.io/collector/pdata v1.65.0
-	go.opentelemetry.io/collector/pdata/testdata v0.159.0
-	go.opentelemetry.io/collector/pipeline v1.65.0
+	go.opentelemetry.io/collector/component v1.67.0
+	go.opentelemetry.io/collector/consumer v1.67.0
+	go.opentelemetry.io/collector/consumer/consumertest v0.161.0
+	go.opentelemetry.io/collector/internal/componentalias v0.161.0
+	go.opentelemetry.io/collector/internal/fanoutconsumer v0.161.0
+	go.opentelemetry.io/collector/pdata v1.67.0
+	go.opentelemetry.io/collector/pdata/testdata v0.161.0
+	go.opentelemetry.io/collector/pipeline v1.67.0
 	go.uber.org/goleak v1.3.0
 	go.uber.org/multierr v1.11.0
 )
