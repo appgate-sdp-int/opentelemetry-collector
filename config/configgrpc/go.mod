@@ -6,24 +6,24 @@ require (
 	github.com/golang/snappy v1.0.0
 	github.com/klauspost/compress v1.19.2
 	github.com/stretchr/testify v1.12.1
-	go.opentelemetry.io/collector/client v1.65.0
-	go.opentelemetry.io/collector/component v1.65.0
-	go.opentelemetry.io/collector/component/componenttest v0.159.0
-	go.opentelemetry.io/collector/config/configauth v1.65.0
-	go.opentelemetry.io/collector/config/configcompression v1.65.0
-	go.opentelemetry.io/collector/config/configmiddleware v1.65.0
-	go.opentelemetry.io/collector/config/confignet v1.65.0
-	go.opentelemetry.io/collector/config/configopaque v1.65.0
-	go.opentelemetry.io/collector/config/configoptional v1.65.0
-	go.opentelemetry.io/collector/config/configtls v1.65.0
-	go.opentelemetry.io/collector/confmap v1.65.0
-	go.opentelemetry.io/collector/extension v1.65.0
-	go.opentelemetry.io/collector/extension/extensionauth v1.65.0
-	go.opentelemetry.io/collector/extension/extensionauth/extensionauthtest v0.159.0
-	go.opentelemetry.io/collector/extension/extensionmiddleware v0.159.0
-	go.opentelemetry.io/collector/extension/extensionmiddleware/extensionmiddlewaretest v0.159.0
-	go.opentelemetry.io/collector/pdata v1.65.0
-	go.opentelemetry.io/collector/pdata/testdata v0.159.0
+	go.opentelemetry.io/collector/client v1.68.0
+	go.opentelemetry.io/collector/component v1.68.0
+	go.opentelemetry.io/collector/component/componenttest v0.162.0
+	go.opentelemetry.io/collector/config/configauth v1.68.0
+	go.opentelemetry.io/collector/config/configcompression v1.68.0
+	go.opentelemetry.io/collector/config/configmiddleware v1.68.0
+	go.opentelemetry.io/collector/config/confignet v1.68.0
+	go.opentelemetry.io/collector/config/configopaque v1.68.0
+	go.opentelemetry.io/collector/config/configoptional v1.68.0
+	go.opentelemetry.io/collector/config/configtls v1.68.0
+	go.opentelemetry.io/collector/confmap v1.68.0
+	go.opentelemetry.io/collector/extension v1.68.0
+	go.opentelemetry.io/collector/extension/extensionauth v1.68.0
+	go.opentelemetry.io/collector/extension/extensionauth/extensionauthtest v0.162.0
+	go.opentelemetry.io/collector/extension/extensionmiddleware v0.162.0
+	go.opentelemetry.io/collector/extension/extensionmiddleware/extensionmiddlewaretest v0.162.0
+	go.opentelemetry.io/collector/pdata v1.68.0
+	go.opentelemetry.io/collector/pdata/testdata v0.162.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.70.0
 	go.opentelemetry.io/otel v1.46.0
 	go.uber.org/goleak v1.3.0
